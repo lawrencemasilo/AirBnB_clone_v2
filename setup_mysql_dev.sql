@@ -1,4 +1,4 @@
-/*This script creates a Database and user to localhost, with all privileges*/
+-- This script creates a Database and user to localhost, with all privileges
 
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 CREATE USER IF NOT EXISTS 'hbnb_dev'@'localhost' IDENTIFIED BY 'hbnb_dev_pwd';
