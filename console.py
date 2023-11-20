@@ -2,8 +2,10 @@
 """ Console Module """
 import cmd
 import sys
-import shlex
 import json
+import shlex
+import models
+from shlex import split
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 from models.__init__ import storage
@@ -116,36 +118,45 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
+    def parse_key_value(self, args):
+        """ Create a dict from list of argument strings."""
+        new_dict = {}
+        for arg in args:
+            if "=" in arg:
+                pair = arg.split('=', 1)
+                key = pair[0]
+                value = pair[1]
+
+                if value[0] == value[-1] == '"':
+                    value = shlex.split(value)[0].replace('_', ' ')
+                else:
+                    try:
+                        value = int(value)
+                    except:
+                        try:
+                            value = float(value)
+                        except:
+                            continue
+                new_dict[key] = value
+        return (new_dict)
+
     def do_create(self, args):
         """ Create an object of any class"""
-        if len(args) == 0:
+        line_args = args.split()
+        if len(line_args) == 0:
             print("** class name missing **")
             return
-        elif len(args) == 1:
-            try:
-                args = shlex.split(args)
-                new_instance = eval(args[0])()
-                new_instance.save()
-                print(new_instance.id)
-            except:
-                print("** class doesn't exist **")
+
+        if line_args[0] in HBNBCommand.classes:
+            new_dict = self.parse_key_value(line_args[1:])
+            class_instance = HBNBCommand.classes[line_args[0]](**new_dict)
         else:
-            try:
-                args = shlex.split(args)
-                name = args.pop(0)
-                obj = eval(name)()
-                for arg in args:
-                    arg = arg.split('=')
-                    if hasattr(obj, arg[0]):
-                        try:
-                            arg[1] = eval(arg[1])
-                        except:
-                            arg[1] = arg[1].replace('_',' ')
-                        setattr(obj, arg[0], arg[1])
-                obj.save()
-            except:
-                return
-            print(obj.id)
+            print("** class doesn't exist **")
+            return
+
+        print(class_instance.id)
+        class_instance.save()
+    
 
     def help_create(self):
         """ Help information for the create method """
@@ -220,21 +231,21 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
+        line_args = args.split()
         print_list = []
 
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+        if len(line_args) == 0:
+            obj_dict = models.storage.all()
+        elif line_args[0] in HBNBCommand.classes:
+            obj_dict = models.storage.all(HBNBCommand.classes[line_args[0]])
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
-
-        print(print_list)
+            print("** class doesn't exist **")
+            return
+        for key in obj_dict:
+            print_list.append(str(obj_dict[key]))
+        print("[", end='')
+        print(", ".join(print_list), end='')
+        print("]")
 
     def help_all(self):
         """ Help information for the all command """
