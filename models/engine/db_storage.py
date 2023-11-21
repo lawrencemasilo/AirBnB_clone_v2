@@ -3,7 +3,7 @@
 from sqlalchemy import create_engine
 import os
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models import base_model
+import models
 
 
 class DBStorage:
@@ -15,7 +15,8 @@ class DBStorage:
     def __init__(self):
         """handles initialization"""
         user = os.getenv('HBNB_MYSQL_USER')
-        password = os.getenv('HBNB_MYSQL_PWD')
+        """password = os.getenv('HBNB_MYSQL_PWD')"""
+        password = 'neolawrencemasilo'
         host = os.getenv('HBNB_MYSQL_HOST', default='localhost')
         db = os.getenv('HBNB_MYSQL_DB')
         self.__engine = create_engine(
@@ -24,7 +25,7 @@ class DBStorage:
                 )
 
         if os.getenv('HBNB_ENV') == 'test':
-            models.Base.metadata.drop_all(self.__engine)
+            models.base_model.Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -33,8 +34,12 @@ class DBStorage:
             objects = session.query(cls).all()
         else:
             classes = [
-                    base_model.User, base_model.State, base_model.City,
-                    base_model.Amenity, base_model.Place, base_model.Review
+                    models.base_model.User,
+                    models.base_model.State,
+                    models.base_model.City,
+                    models.base_model.Amenity,
+                    models.base_model.Place,
+                    models.base_model.Review
             ]
             objects = []
             for clas in classes:
@@ -68,7 +73,7 @@ class DBStorage:
 
     def reload(self):
         """Loads storage dictionary from Database"""
-        Base.metadata.create_all(self.__engine)
+        models.base_model.Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(
                 bind=self.__engine,
                 expire_on_commit=False

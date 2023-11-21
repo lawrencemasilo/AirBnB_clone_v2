@@ -3,9 +3,8 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-import models
-from models.engine.file_storage import FileStorage
 from models.engine.db_storage import DBStorage
+import models
 
 
 class State(BaseModel, Base):
@@ -15,8 +14,7 @@ class State(BaseModel, Base):
 
     if DBStorage:
         cities = relationship('City', cascade='all, delete', backref='state')
-
-    if FileStorage:
+    else:
         @property
         def cities(self):
             return [
