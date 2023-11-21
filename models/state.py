@@ -12,10 +12,14 @@ from models.engine.db_storage import DBStorage
 
 class State(BaseModel, Base):
     """ State class """
-    if models.storage_t == "db":
+    if models.base_model.storage_t == "db":
         __tablename__ = 'states'
         name = Column(String(128), nullable=False)
-        cities = relationship("City", cascade="all, delete" backref="state")
+        cities = relationship(
+                "City",
+                cascade="all, delete-orphan",
+                backref="state"
+                )
     else:
         name = ""
 
@@ -23,7 +27,7 @@ class State(BaseModel, Base):
         """Initialises state class."""
         super().__init__(*args, **kwargs)
 
-    if models.storage_t != "db":
+    if models.base_model.storage_t != "db":
         @property
         def cities(self):
             """gets list of city instances related to state instance"""
