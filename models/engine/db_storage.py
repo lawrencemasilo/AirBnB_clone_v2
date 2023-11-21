@@ -15,8 +15,7 @@ class DBStorage:
     def __init__(self):
         """handles initialization"""
         user = os.getenv('HBNB_MYSQL_USER')
-        """password = os.getenv('HBNB_MYSQL_PWD')"""
-        password = 'neolawrencemasilo'
+        password = os.getenv('HBNB_MYSQL_PWD')
         host = os.getenv('HBNB_MYSQL_HOST', default='localhost')
         db = os.getenv('HBNB_MYSQL_DB')
         self.__engine = create_engine(
