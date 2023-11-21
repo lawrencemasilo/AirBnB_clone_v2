@@ -15,6 +15,7 @@ classes = {
             'Review': Review
             }
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
@@ -57,18 +58,19 @@ class FileStorage:
 
     def reload(self):
         """Loads storage dictionary from file"""
-        
+
         try:
             temp = {}
             with open(self.__file_path, 'r') as f:
                 temp = json.load(f)
             for key in temp:
-                self.__objects[key] = classes[temp[key]['__class__']](**temp[key])
+                cls_str = '__class__'
+                self.__objects[key] = classes[temp[key][cls_str]](**temp[key])
         except FileNotFoundError:
             pass
 
-    """def delete(self, obj=None):
-        Deletes object from __objects if it's inside
+    def delete(self, obj=None):
+        """Deletes object from __objects if it's inside"""
         if obj:
             obj_key = "{}.{}".format(obj.__class__.__name__, obj.id)
-            self.__objects.pop(obj_key, None)"""
+            self.__objects.pop(obj_key, None)
