@@ -4,6 +4,7 @@ import models
 import sqlalchemy
 from models.base_model import BaseModel, Base
 from models.review import Review
+from models.amenity import Amenity
 from os import getenv
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
@@ -15,13 +16,15 @@ if models.base_model.storage_t == 'db':
             Column(
                 'amenity_id',
                 String(60),
-                ForeignKey('amenities.id'),
+                ForeignKey('amenities.id', onupdate='CASCADE',
+                    ondelete='CASCADE'),
                 primary_key=True
                 ),
             Column(
                 'place_id',
                 String(60),
-                ForeignKey('places.id'),
+                ForeignKey('places.id', onupdate='CASCADE',
+                    ondelete='CASCADE'),
                 primary_key=True
                 ),
             extend_existing=True
@@ -43,10 +46,10 @@ class Place(BaseModel, Base):
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
         reviews = relationship("Review", backref="place")
-
         amenities = relationship(
                 "Amenity",
-                secondary=place_amenity,
+                secondary="place_amenity",
+                backref="place_amenities",
                 viewonly=False
                 )
 
@@ -73,24 +76,17 @@ class Place(BaseModel, Base):
             """gets lists of review instances relating to place instance"""
             review_ls = []
             all_reviews = models.storage.all(Review)
-            for review in all_reviews.value():
+            for review in all_reviews.values():
                 if review.place_id == self.id:
                     review_ls.append(review)
             return (review_ls)
 
-    if models.base_model.storage_t != "db":
         @property
         def amenities(self):
+            """gets list of amenity instances relating to place instance"""
             amenity_list = []
-            for amenity_id in self.amenity_ids:
-                amenity = models.storage.get("Amenity", amenity_id)
-                if amenity:
+            all_amenities = models.storage.all(Amenity)
+            for amenity in all_amenities.values():
+                if amenity.place_id == self.id:
                     amenity_list.append(amenity)
-            return amenity_list
-
-        @amenities.setter
-        def amenities(self, amenity_obj):
-            if isinstance(amenity_obj, models.Amenity):
-                if amenity_obj.id not in self.amenity_ids:
-                    self.amenity_ids.append(amenity_obj.id)
-                    models.storage.save()
+            return (amenity_list)
