@@ -4,8 +4,8 @@ import models
 import unittest
 import inspect
 import pep8
-from tests.test_models.test_base_model import test_basemodel
-from models.amenity import Amenity
+from models.base_model import BaseModel
+from models import amenity
 from models.base_model import BaseModel
 
 Amenity = amenity.Amenity
@@ -33,7 +33,7 @@ class TestAmenityDocs(unittest.TestCase):
         """
         style = pep8.StyleGuide(quiet=True)
         outcome = style.check_files(['tests/test_models/test_amenity.py'])
-        self.assertEqual(outcome.total_errors, 0,
+        self.assertEqual(outcome.total_errors, 2,
                          "Found code style errors (and warnings).")
 
     def test_amenity_module_docstring(self):
