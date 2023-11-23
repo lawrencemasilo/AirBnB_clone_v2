@@ -37,6 +37,6 @@ class TestConsoleDocs(unittest.TestCase):
     def test_HBNBCommand_docstring(self):
         """Tests docstring for HBNBCommand class."""
         self.assertIsNot(HBNBCommand.__doc__, None,
-                "HBNBCommand needs docstring")
+                         "HBNBCommand needs docstring")
         self.assertTrue(len(HBNBCommand.__doc__) >= 1,
-                "HBNBCommand needs docstring")
+                        "HBNBCommand needs docstring")
