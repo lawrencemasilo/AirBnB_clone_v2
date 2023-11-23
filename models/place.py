@@ -17,14 +17,14 @@ if models.base_model.storage_t == 'db':
                 'amenity_id',
                 String(60),
                 ForeignKey('amenities.id', onupdate='CASCADE',
-                    ondelete='CASCADE'),
+                           ondelete='CASCADE'),
                 primary_key=True
                 ),
             Column(
                 'place_id',
                 String(60),
                 ForeignKey('places.id', onupdate='CASCADE',
-                    ondelete='CASCADE'),
+                           ondelete='CASCADE'),
                 primary_key=True
                 ),
             extend_existing=True
