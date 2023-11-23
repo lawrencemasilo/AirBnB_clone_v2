@@ -15,7 +15,7 @@ class TestConsoleDocs(unittest.TestCase):
         outcome = style.check_files(['console.py'])
         self.assertEqual(
                 outcome.total_errors,
-                2,
+                0,
                 "Found code style errors (and warnings)."
                 )
 
@@ -25,7 +25,7 @@ class TestConsoleDocs(unittest.TestCase):
         outcome = style.check_files(['tests/test_console.py'])
         self.assertEqual(
                 outcome.total_errors,
-                2,
+                0,
                 "Found code style errors (and warnings)."
                 )
 
